@@ -140,8 +140,20 @@ const KEY='milashka-garden-v1';
 function today(){let d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`}
 function fresh(){return {name:'Милашка',day:1,water:0,lastDay:today(),date:today(),flower:'🌸',pot:'🪴',lastWater:'',potColor:'#c88769',potStyle:'✿',care:0}}
 let state;
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
-function ageDays(date){let a=new Date(date+'T12:00:00'),b=new Date(today()+'T12:00:00');return Math.max(0,Math.floor((b-a)/86400000))}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}function ageDays(date) {
+  if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return 0;
+  }
+
+  const a = new Date(date + "T12:00:00");
+  const b = new Date(today() + "T12:00:00");
+
+  if (isNaN(a.getTime()) || isNaN(b.getTime())) {
+    return 0;
+  }
+
+  return Math.max(0, Math.floor((b - a) / 86400000));
+}
 function load(){
  try{state=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){state=fresh()}
  state={...fresh(),...state};
@@ -176,10 +188,10 @@ function render(){
 function mix(hex){let h=hex.replace('#','');let n=parseInt(h,16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;return `rgb(${Math.min(255,r+35)},${Math.min(255,g+35)},${Math.min(255,b+35)})`}
 function waterPlant(){
  state.water=(Number(state.water)||0)+1;
- state.care=(Number(state.care)||0)+1;
+ state.love=(Number(state.care)||0)+1;
  state.lastWater=today();
  save();render();
- document.getElementById('message').textContent='Спасибо, мне так хорошо! 💚';
+ document.getElementById('message').textContent='Я люблю тебя';
  const plant=document.getElementById('plant');
  plant.classList.remove('watered');void plant.offsetWidth;plant.classList.add('watered');
  const box=document.getElementById('drops');box.innerHTML='';
