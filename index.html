@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Little Life — мой сад</title>
+<style>
+*{box-sizing:border-box}
+:root{--ink:#40513f;--sage:#71886a;--paper:#fffdf6;--bg:#edf0e5}
+body{margin:0;padding:18px 12px 30px;background:var(--bg);color:var(--ink);font-family:Georgia,serif;text-align:center}
+main{max-width:430px;margin:auto}
+header{padding:8px 0 12px}
+.eyebrow{font:10px Arial,sans-serif;letter-spacing:3px;color:#819078}
+h1{font-size:23px;font-weight:normal;margin:7px 0}
+.subtitle{font-size:13px;color:#798674;margin:0}
+.card{background:var(--paper);border:1px solid #dce2d2;border-radius:25px;padding:15px;box-shadow:0 8px 25px #5363450d}
+.scene{height:300px;position:relative;overflow:hidden;border-radius:19px;background:linear-gradient(#e4eee9 0%,#edf0df 72%,#e5e8cf 100%);display:flex;align-items:flex-end;justify-content:center}
+.sun{position:absolute;top:24px;right:28px;width:43px;height:43px;border-radius:50%;background:#f6e5ad;opacity:.8}
+.cloud{position:absolute;top:47px;left:22px;font-size:29px;opacity:.55}
+.ground{position:absolute;bottom:0;left:0;right:0;height:43px;background:#d4dfbb;border-radius:50% 50% 0 0}
+.plant{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);width:180px;height:195px;display:flex;align-items:flex-end;justify-content:center}
+.stem{position:absolute;bottom:36px;width:8px;height:110px;background:#69946b;border-radius:8px;transform:rotate(-2deg);transform-origin:bottom;z-index:1}
+.leaf{position:absolute;bottom:94px;font-size:38px;z-index:2}
+.leaf.left{left:35px;transform:rotate(-28deg)}
+.leaf.right{right:32px;bottom:116px;transform:scaleX(-1) rotate(-25deg)}
+.bloom{position:absolute;bottom:128px;left:50%;transform:translateX(-50%);font-size:65px;z-index:3;filter:drop-shadow(0 3px 2px #5263451a);transition:transform .35s}
+.plant.stage1 .bloom{font-size:45px;bottom:110px}
+.plant.stage1 .stem{height:75px}
+.plant.stage1 .leaf{bottom:77px;font-size:29px}
+.plant.stage2 .bloom{font-size:57px;bottom:121px}
+.plant.stage3 .bloom{font-size:69px;bottom:130px}
+.pot{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:100px;height:76px;background:var(--pot,#c88769);clip-path:polygon(0 0,100% 0,83% 100%,17% 100%);z-index:4;filter:drop-shadow(0 4px 2px #0001)}
+.pot-rim{position:absolute;bottom:68px;left:50%;transform:translateX(-50%);width:111px;height:17px;background:var(--rim,#dfa58a);border-radius:5px;z-index:5}
+.soil{position:absolute;bottom:67px;left:50%;transform:translateX(-50%);width:94px;height:12px;background:#70523f;border-radius:50%;z-index:5}
+.pot-mark{position:absolute;bottom:27px;left:50%;transform:translateX(-50%);font-size:20px;z-index:6;opacity:.8}
+#drops{position:absolute;inset:0;pointer-events:none;z-index:8}
+.drop{position:absolute;top:30px;left:var(--x);font-size:22px;animation:fall .75s ease-in forwards}
+@keyframes fall{to{transform:translateY(190px) rotate(25deg);opacity:0}}
+@keyframes sway{0%,100%{rotate:0deg}30%{rotate:-7deg}65%{rotate:6deg}}
+.plant.watered{animation:sway .65s ease}
+#flower.celebrate{transform:translateX(-50%) scale(1.2) rotate(8deg)}
+.name{font-size:23px;margin:17px 0 4px}
+.stage-label{font:12px Arial,sans-serif;color:#85917b}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:17px 0}
+.stat{background:#f0f3e9;border-radius:13px;padding:11px 3px;font:12px Arial,sans-serif;color:#71806b}
+.stat b{display:block;font: bold 20px Georgia,serif;color:var(--ink);margin-top:4px}
+#message{min-height:37px;font-size:14px;line-height:1.5;margin:10px 0}
+button,input,select{font:inherit;border-radius:12px;padding:11px;border:1px solid #d5decc;background:white;color:var(--ink)}
+button{cursor:pointer;transition:transform .12s,background .12s}
+button:active{transform:scale(.97)}
+.primary{background:#6f8967;color:white;border:0;padding:14px 20px;width:100%;font-size:15px}
+.controls{margin-top:18px;text-align:left}
+label{display:block;font:12px Arial,sans-serif;color:#788570;margin:14px 0 6px}
+input,select{width:100%}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.secondary{background:#f0f3e9;border:0}
+.note{font:11px/1.6 Arial,sans-serif;color:#899383;margin:18px 5px 0}
+.details{margin-top:14px}
+summary{cursor:pointer;font-size:13px;color:#74836d;padding:9px}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="eyebrow">A LITTLE WORLD OF YOUR OWN</div>
+<h1>Мой маленький сад</h1>
+<p class="subtitle">Маленькая жизнь, которая растёт в своём ритме.</p>
+</header>
+<section class="card">
+<div class="scene" id="scene">
+<div class="sun"></div><div class="cloud">☁</div>
+<div class="ground"></div>
+<div class="plant stage1" id="plant">
+<div class="stem"></div>
+<div class="leaf left">🍃</div>
+<div class="leaf right">🍃</div>
+<div class="bloom" id="flower">🌱</div>
+<div class="pot" id="pot"></div>
+<div class="soil"></div><div class="pot-rim" id="potRim"></div>
+<div class="pot-mark" id="potMark">✿</div>
+</div>
+<div id="drops"></div>
+</div>
+<div class="name" id="nameDisplay">Милашка</div>
+<div class="stage-label" id="stage">Маленький росток</div>
+<div class="stats">
+<div class="stat">Возраст<b id="day">1</b> день</div>
+<div class="stat">Поливы<b id="water">0</b></div>
+<div class="stat">Забота<b id="care">0</b></div>
+</div>
+<p id="message">Привет! Я только начинаю расти.</p>
+<button class="primary" id="waterBtn" onclick="waterPlant()">💧 Полить цветочек</button>
+<div class="controls">
+<label for="plantName">Имя твоего растения</label>
+<input id="plantName" maxlength="24" placeholder="Придумай имя">
+<button class="secondary" style="width:100%;margin-top:7px" onclick="renamePlant()">Сохранить имя</button>
+<label for="color">Цвет цветка</label>
+<select id="color" onchange="changeColor()">
+<option value="🌸">Нежно-розовый</option>
+<option value="🌼">Солнечный жёлтый</option>
+<option value="🌺">Яркий тропический</option>
+<option value="🪷">Лотосовый</option>
+<option value="💮">Белый</option>
+<option value="🌻">Подсолнух</option>
+<option value="🪻">Лавандовый</option>
+</select>
+<label for="potColor">Цвет горшка</label>
+<select id="potColor" onchange="changePot()">
+<option value="#c88769">Терракотовый</option>
+<option value="#8a9fbd">Туманный голубой</option>
+<option value="#a9b69a">Шалфейный</option>
+<option value="#c9b8d9">Сиреневый</option>
+<option value="#e1d6bd">Слоновая кость</option>
+<option value="#6e777b">Холодный серый</option>
+</select>
+<label for="potStyle">Узор горшка</label>
+<select id="potStyle" onchange="changePot()">
+<option value="✿">Цветочек</option>
+<option value="✧">Звёздочка</option>
+<option value="♡">Сердечко</option>
+<option value="☾">Луна</option>
+<option value="·">Минимализм</option>
+</select>
+</div>
+<details class="details">
+<summary>Сохранение и резервная копия</summary>
+<p class="note">Игра сохраняется в данных браузера на этом устройстве. Экспортируй копию, чтобы не потерять прогресс.</p>
+<div class="row">
+<button class="secondary" onclick="exportSave()">Экспорт</button>
+<button class="secondary" onclick="document.getElementById('importFile').click()">Импорт</button>
+</div>
+<input id="importFile" type="file" accept=".json,application/json" hidden onchange="importSave(event)">
+</details>
+</section>
+<p class="note">Твой сад растёт по календарным дням. Поливай, когда хочется, и не переживай: пропущенный день не обнуляет прогресс.</p>
+</main>
+<script>
+const KEY='milashka-garden-v1';
+function today(){let d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`}
+function fresh(){return {name:'Милашка',day:1,water:0,lastDay:today(),date:today(),flower:'🌸',pot:'🪴',lastWater:'',potColor:'#c88769',potStyle:'✿',care:0}}
+let state;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function ageDays(date){let a=new Date(date+'T12:00:00'),b=new Date(today()+'T12:00:00');return Math.max(0,Math.floor((b-a)/86400000))}
+function load(){
+ try{state=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){state=fresh()}
+ state={...fresh(),...state};
+ let elapsed=ageDays(state.date||state.lastDay||today());
+ state.day=Math.max(1,Number(state.day)||1)+elapsed;
+ state.date=today();state.lastDay=today();
+ save();render();
+}
+function stageInfo(){
+ if(state.day>=14)return {name:'Время цветения',emoji:state.flower,cls:'stage3'};
+ if(state.day>=7)return {name:'Юный цветок',emoji:state.flower,cls:'stage2'};
+ if(state.day>=3)return {name:'Крепкий росток',emoji:'🌿',cls:'stage2'};
+ return {name:'Маленький росток',emoji:'🌱',cls:'stage1'};
+}
+function render(){
+ const s=stageInfo();
+ document.getElementById('nameDisplay').textContent=state.name;
+ document.getElementById('plantName').value=state.name;
+ document.getElementById('day').textContent=state.day;
+ document.getElementById('water').textContent=state.water;
+ document.getElementById('care').textContent=state.care||0;
+ document.getElementById('stage').textContent=s.name;
+ document.getElementById('flower').textContent=s.emoji;
+ document.getElementById('plant').className='plant '+s.cls;
+ document.getElementById('color').value=state.flower;
+ document.getElementById('potColor').value=state.potColor;
+ document.getElementById('potStyle').value=state.potStyle;
+ document.getElementById('potMark').textContent=state.potStyle;
+ document.getElementById('pot').style.setProperty('--pot',state.potColor);
+ document.getElementById('potRim').style.setProperty('--rim',mix(state.potColor));
+}
+function mix(hex){let h=hex.replace('#','');let n=parseInt(h,16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;return `rgb(${Math.min(255,r+35)},${Math.min(255,g+35)},${Math.min(255,b+35)})`}
+function waterPlant(){
+ state.water=(Number(state.water)||0)+1;
+ state.care=(Number(state.care)||0)+1;
+ state.lastWater=today();
+ save();render();
+ document.getElementById('message').textContent='Спасибо, мне так хорошо! 💚';
+ const plant=document.getElementById('plant');
+ plant.classList.remove('watered');void plant.offsetWidth;plant.classList.add('watered');
+ const box=document.getElementById('drops');box.innerHTML='';
+ for(let i=0;i<7;i++){let d=document.createElement('span');d.className='drop';d.textContent='💧';d.style.setProperty('--x',(25+Math.random()*50)+'%');d.style.animationDelay=(i*.09)+'s';box.appendChild(d)}
+ setTimeout(()=>{box.innerHTML='';plant.classList.remove('watered')},1400);
+}
+function renamePlant(){
+ let n=document.getElementById('plantName').value.trim();if(!n)return;
+ state.name=n;save();render();
+ document.getElementById('message').textContent='Теперь меня зовут '+n+'! 🌱';
+}
+function changeColor(){state.flower=document.getElementById('color').value;save();render()}
+function changePot(){state.potColor=document.getElementById('potColor').value;state.potStyle=document.getElementById('potStyle').value;save();render()}
+function exportSave(){
+ let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+ let url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='little-life-save.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
+}
+function importSave(e){
+ let file=e.target.files[0];if(!file)return;
+ let r=new FileReader();
+ r.onload=()=>{try{
+ let s=JSON.parse(r.result);
+ if(typeof s.name!=='string'||typeof s.day!=='number'||typeof s.water!=='number')throw Error();
+ state={...fresh(),...s};state.date=today();state.lastDay=today();save();render();
+ document.getElementById('message').textContent='Сохранение вернулось домой. 💚';
+ }catch(err){alert('Не удалось прочитать это сохранение.')}};
+ r.readAsText(file);e.target.value='';
+}
+load();
+</script>
+</body>
+</html>
