@@ -188,7 +188,7 @@ function render(){
 function mix(hex){let h=hex.replace('#','');let n=parseInt(h,16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;return `rgb(${Math.min(255,r+35)},${Math.min(255,g+35)},${Math.min(255,b+35)})`}
 function waterPlant(){
  state.water=(Number(state.water)||0)+1;
- state.love=(Number(state.care)||0)+1;
+ state.care=(Number(state.care)||0)+1;
  state.lastWater=today();
  save();render();
  document.getElementById('message').textContent='Я люблю тебя';
